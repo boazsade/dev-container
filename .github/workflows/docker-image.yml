@@ -25,4 +25,3 @@ jobs:
       run: | 
         docker build . --file Dockerfile --tag ghcr.io/boazsade/ubuntu22-dev:latest
         docker push ghcr.io/boazsade/ubuntu22-dev:latest
-        docker push ghcr.io/boazsade/ubuntu22-dev:latest
