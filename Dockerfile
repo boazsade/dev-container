@@ -1,5 +1,5 @@
 FROM ubuntu:latest
-
+# This dockerfile is used by the github actions for my other repos
 RUN apt-get -y update
 RUN DEBIAN_FRONTEND=noninteractive apt-get -y install tzdata
 ENV LANG en_US.utf8
