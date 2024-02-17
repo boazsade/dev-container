@@ -7,7 +7,7 @@ ENV LANG en_US.utf8
 RUN apt-get install -y build-essential zlib1g \
     zlib1g-dev cmake libgtest-dev ninja-build \
     libpcap-dev  libssl-dev libboost-all-dev clang-tidy \
-    vim
+    vim git
 
 RUN apt install -y python3-pip
 RUN pip install grequests
