@@ -19,8 +19,25 @@ function print-usage {
     echo "    [-m]--memory] <ON|OFF> enable memory profiler in the build. Please note that this is better left off in release builds"
 }
 
+function is_full_path {
+    case "x$1" in
+    (x*/..|x*/../*|x../*|x*/.|x*/./*|x./*)
+        rc=1
+        ;;
+    (x/*)
+        rc=0
+        ;;
+    (*)
+        rc=1
+        ;;
+    esac
+    return $rc
+}
+
+
 SCRIPT=$(realpath "$0")
 SOURCES=$(dirname "${SCRIPT}")
+SOURES_DIR=$(while [ ! -f CMakeLists.txt ]; do cd ..; done ; pwd)
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -86,6 +103,11 @@ if [ "${GENERATE}" = "" ]; then
     GENERATE=0
 fi
 
+is_full_path $BUILD_DIR  || {
+    BUILD_DIR=$SOURES_DIR/${BUILD_DIR}
+}
+echo "build directory is set to ${BUILD_DIR}"
+
 if [ "$DO_CLEAN" != "" ]; then
     echo "cleaning build dir ${BUILD_DIR}"
     rm -rf ${BUILD_DIR} || {
@@ -106,7 +128,7 @@ cd ${BUILD_DIR} || {
     exit 1
 }
 if [ ${GENERATE} -eq 1 ]; then
-    conan install ${SOURCES}  --output-folder=. --build=missing --settings=build_type=${BUILD_TYPE} || {
+    conan install ${SOURES_DIR}  --output-folder=. --build=missing --settings=build_type=${BUILD_TYPE} || {
 	 echo "failed to install conan dependecies"
     	 exit 1
     }
@@ -116,7 +138,7 @@ if [ ${GENERATE} -eq 1 ]; then
 	    -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
 	    -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake \
 	    -DCMAKE_POLICY_DEFAULT_CMP0091=NEW \
-	    -G Ninja ${SOURCES} || {
+	    -G Ninja ${SOURES_DIR} || {
         echo "failed to generate cmake project at ${BUILD_DIR}"
         exit 1
     }
