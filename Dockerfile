@@ -9,16 +9,14 @@ RUN apt-get install -y build-essential \
     clang-tidy git wget
 
 RUN apt install -y python3-pip
-RUN pip install grequests
 
 RUN mkdir -p /workspace/conan 
 ENV CONAN_HOME=/workspace/conan
 
-RUN git clone https://github.com/conan-io/conan conan_src && \
-	cd conan_src && \
-	git fetch --all && \
-	git checkout -b develop3 origin/develop2 && \
-	python3 -m pip install -e .
+RUN wget https://github.com/conan-io/conan/releases/download/2.9.1/conan-2.9.1-amd64.deb && \
+	dpkg -i conan-2.9.1-amd64.deb && \
+	rm -rf conan-2.9.1-amd64.deb
+
 
 RUN conan profile detect --force && \
 	grep -v compiler.cppst $CONAN_HOME/profiles/default > $CONAN_HOME/profiles/default.tmp && \
